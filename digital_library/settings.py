@@ -66,5 +66,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 from django.urls import reverse_lazy   # na samej górze pliku, razem z innymi importami
 
-LOGIN_REDIRECT_URL = reverse_lazy("book-list")   # lub dowolna nazwa url
-LOGOUT_REDIRECT_URL = "/"                        # np. strona główna
+
+LOGIN_REDIRECT_URL  = reverse_lazy("library:book-list")   # zamiast "book-list"
+LOGOUT_REDIRECT_URL = "/"

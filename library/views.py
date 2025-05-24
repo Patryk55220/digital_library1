@@ -93,3 +93,8 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     Prosty widok profilu – dostępny tylko dla zalogowanych.
     """
     template_name = "library/profile.html"
+     
+     
+from django.views.generic import TemplateView
+class BookListView(TemplateView):
+    template_name = "library/book_list.html"
