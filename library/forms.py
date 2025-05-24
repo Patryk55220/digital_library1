@@ -1,17 +1,15 @@
 from django import forms
-from .models import Book, Author
+from .models import Book, Loan
 
-class AuthorForm(forms.ModelForm):
-    class Meta:
-        model = Author
-        fields = ("first_name", "last_name")
 
 class BookForm(forms.ModelForm):
     class Meta:
-        model = Book
+        model  = Book
         fields = ("title", "author", "year")
-    def clean_year(self):
-        year = self.cleaned_data["year"]
-        if year < 1450 or year > 2100:
-            raise forms.ValidationError("Podaj prawidłowy rok wydania.")
-        return year
+
+
+class LoanForm(forms.ModelForm):
+    class Meta:
+        model  = Loan
+        fields = ("due_date",)
+        widgets = {"due_date": forms.DateTimeInput(attrs={"type": "datetime-local"})}
