@@ -1,0 +1,9 @@
+{% extends 'library/base.html' %}
+{% block title %}{{ view.object|yesno:"Edytuj,Nowa" }} książka{% endblock %}
+{% block content %}
+<h1>{{ view.object|yesno:"Edytuj,Nowa" }} książka</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Zapisz</button>
+</form>
+{% endblock %}
