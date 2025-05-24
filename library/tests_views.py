@@ -1,0 +1,30 @@
+from django.test import TestCase
+from django.urls import reverse
+from .models import Book, Author
+
+class BookViewsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        author = Author.objects.create(name="Y")
+        Book.objects.create(title="X", author=author, year=1999)
+
+    def test_list_view(self):
+        resp = self.client.get(reverse('library:book-list'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'library/book_list.html')
+
+    def test_detail_view(self):
+        book = Book.objects.first()
+        resp = self.client.get(reverse('library:book-detail', args=[book.pk]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, book.title)
+
+    def test_create_redirects(self):
+        author = Author.objects.create(name="Z")
+        resp = self.client.post(reverse('library:book-add'), {
+            'title': 'Nowa książka',
+            'author': author.pk,
+            'year': 2025
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertTrue(Book.objects.filter(title='Nowa książka').exists())
