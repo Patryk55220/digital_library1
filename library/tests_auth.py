@@ -1,22 +1,19 @@
+# library/tests_auth.py
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 from django.urls import reverse
-
-User = get_user_model()
+from django.contrib.auth.models import User
 
 class ProfileViewTest(TestCase):
-    def setUp(self):
-        # tworzymy użytkownika
-        self.user = User.objects.create_user(username='użytkownik', password='tajne')
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username='testuser', password='pass')
 
-    def test_redirect_if_anonymous(self):
-        url = reverse('library:profile')
-        resp = self.client.get(url)
-        # powinno przekierować na login i dopisać next=
-        self.assertRedirects(resp, f"{reverse('login')}?next={url}")
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(reverse('library:profile'))
+        self.assertRedirects(response, '/accounts/login/?next=/accounts/profile/')
 
-    def test_profile_for_logged_in(self):
-        self.client.login(username='użytkownik', password='tajne')
-        resp = self.client.get(reverse('library:profile'))
-        self.assertEqual(resp.status_code, 200)
-        self.assertTemplateUsed(resp, 'library/profile.html')
+    def test_logged_in_uses_correct_template(self):
+        self.client.login(username='testuser', password='pass')
+        response = self.client.get(reverse('library:profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'library/profile.html')

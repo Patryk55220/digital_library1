@@ -1,0 +1,9 @@
+{% extends "library/base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>{{ object.title }}</h1>
+    <p><strong>Autor:</strong> {{ object.author.name }}</p>
+    <p><strong>Rok wydania:</strong> {{ object.year }}</p>
+    <a href="{% url 'library:book-list' %}">Powrót do listy książek</a>
+{% endblock %}

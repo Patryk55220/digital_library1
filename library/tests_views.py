@@ -1,12 +1,20 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from .models import Book, Author
+from .models import Author, Book
+
 
 class BookViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        author = Author.objects.create(name="Y")
-        Book.objects.create(title="X", author=author, year=1999)
+        cls.author = Author.objects.create(name="Y")
+        Book.objects.create(title="X", author=cls.author, year=1999)
+        # Tworzymy usera do logowania
+        cls.user = User.objects.create_user(username='testuser', password='12345')
+
+    def setUp(self):
+        # Logujemy się przed każdym testem
+        self.client.login(username='testuser', password='12345')
 
     def test_list_view(self):
         resp = self.client.get(reverse('library:book-list'))

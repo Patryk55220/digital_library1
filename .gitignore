@@ -1,17 +1,18 @@
 # Python
-__pycache__/
 *.py[cod]
-
-# baza sqlite
+__pycache__/
 *.sqlite3
+*.log
 
-# wirtualne środowisko
-venv/
-.env
+# Virtualenv
+/venv/
+/env/
 
 # IDE
 .vscode/
 .idea/
 
-# logi
-*.log
+# Static and media
+/staticfiles/
+/media/
+s

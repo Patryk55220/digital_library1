@@ -1,41 +1,41 @@
-from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
 
+def default_due_date():
+    return timezone.now() + timedelta(days=14)
 
 class Author(models.Model):
-    first_name = models.CharField(max_length=40)
-    last_name  = models.CharField(max_length=40)
+    name = models.CharField('Imię i nazwisko', max_length=200)
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name}"
+        return self.name
 
+    class Meta:
+        verbose_name = 'Autor'
+        verbose_name_plural = 'Autorzy'
 
 class Book(models.Model):
-    title  = models.CharField(max_length=120)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    year   = models.PositiveIntegerField()
-
-    @property
-    def is_available(self) -> bool:
-        return not hasattr(self, "loan")
+    title = models.CharField('Tytuł', max_length=200)
+    author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name='books')
+    year = models.PositiveIntegerField('Rok wydania')
 
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('library:book-detail', args=[self.pk])
 
-# ---------- POPRAWKA: *funkcja*, a nie lambda ----------
-def default_due_date():
-    """Zwraca datę zwrotu +30 dni od teraz."""
-    return timezone.now() + timedelta(days=30)
-
+    @property
+    def is_available(self):
+        return not self.loans.exists()  # zakładamy, że related_name='loans' w Loan
 
 class Loan(models.Model):
-    book        = models.OneToOneField(Book, on_delete=models.CASCADE)
-    user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    borrowed_at = models.DateTimeField(auto_now_add=True)
-    due_date    = models.DateTimeField(default=default_due_date)   # ← tu już bez lambda
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='loans')
+    date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField('Termin zwrotu', default=default_due_date)  # domyślnie 14 dni do przodu
 
-    def __str__(self):
-        return f"{self.book} → {self.user}"
+    class Meta:
+        unique_together = ('user', 'book')

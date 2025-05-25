@@ -1,51 +1,42 @@
-{# library/templates/library/base.html #}
 <!DOCTYPE html>
+{% load static %}
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}{% endblock %} – Moja Biblioteka</title>
-  {% load static %}
-  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>{% block title %}Moja Biblioteka{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'library:book-list' %}">Biblioteka</a>
-      <button class="navbar-toggler" type="button" 
-              data-bs-toggle="collapse" data-bs-target="#mainNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <nav class="navbar navbar-expand bg-light mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'library:book-list' %}">Biblioteka</a>
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+                </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+<li class="nav-item">
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="nav-link" style="background:none;border:none;padding:0;margin:0;color:inherit;cursor:pointer;">
+        Wyloguj
+    </button>
+</form>
+</li>
+{% else %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'login' %}">Zaloguj</a>
+</li>
+{% endif %}
 
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto">
-          {# Link do panelu admina tylko jeśli user.is_staff lub is_superuser #}
-          {% if user.is_staff %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-            </li>
-          {% endif %}
-
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'library:profile' %}">Profil</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Wyloguj</a>
-            </li>
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Zaloguj</a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
     </div>
-  </nav>
-
-  <div class="container py-4">
-    {% block content %}{% endblock %}
-  </div>
-
-  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
