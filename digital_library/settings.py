@@ -29,7 +29,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "digital_library.urls"
 TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
-    "DIRS": [BASE_DIR / "templates"],
+    "DIRS": [BASE_DIR / "library" / "templates"],
     "APP_DIRS": True,
     "OPTIONS": {"context_processors": [
         "django.template.context_processors.debug",
@@ -42,11 +42,16 @@ TEMPLATES = [{
 WSGI_APPLICATION = "digital_library.wsgi.application"
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL", "sqlite:///db.sqlite3"),
-        conn_max_age=600,
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'digital_library'),
+        'USER': os.environ.get('POSTGRES_USER', 'dl_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'secret'),
+        'HOST': 'db',  # nazwa serwisu z docker-compose
+        'PORT': 5432,
+    }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [{
     "NAME":"django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -67,5 +72,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 from django.urls import reverse_lazy   # na samej górze pliku, razem z innymi importami
 
 
-LOGIN_REDIRECT_URL  = reverse_lazy("library:book-list")   # zamiast "book-list"
-LOGOUT_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+DEBUG = True
+

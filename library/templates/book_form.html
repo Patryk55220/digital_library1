@@ -1,4 +1,4 @@
-{% extends 'library/base.html' %}
+{% extends "base.html" %}
 {% block title %}{{ view.object|yesno:"Edytuj,Nowa" }} książka{% endblock %}
 {% block content %}
 <h1>{{ view.object|yesno:"Edytuj,Nowa" }} książka</h1>

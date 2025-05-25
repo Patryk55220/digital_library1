@@ -1,4 +1,4 @@
-{% url "library:book-list" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block title %}Profil użytkownika{% endblock %}
@@ -6,38 +6,74 @@
 {% block content %}
 <div class="container py-4">
 
-  <h2 class="mb-3">
-    Witaj, {{ user.get_full_name|default:user.username }}!
-  </h2>
+    <h2 class="mb-3">
+        Witaj, {{ user.get_full_name|default:user.username }}!
+    </h2>
 
-  <div class="card w-100">
-    <div class="card-body">
-      <h5 class="card-title">Dane konta</h5>
+    <div class="card mt-4">
+  <div class="card-body">
+    <h5 class="card-title">Twoje wypożyczenia</h5>
+    {% if user_loans %}
+      <ul class="list-group">
+        {% for loan in user_loans %}
+          <li class="list-group-item">
+            <strong>{{ loan.book.title }}</strong>
+            <br>
+            Wypożyczono: {{ loan.date_loaned|date:"d.m.Y" }},
+            termin zwrotu: <strong>{{ loan.due_date|date:"d.m.Y" }}</strong>
+            {% if loan.due_date < today %}
+              <span class="badge bg-danger">Przeterminowane!</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nie masz aktualnie wypożyczonych książek.</p>
+    {% endif %}
+  </div>
+</div>
 
-      <p class="card-text">
-        <strong>Nazwa użytkownika:</strong> {{ user.username }}
-      </p>
 
-      <p class="card-text">
-        <strong>E-mail:</strong> {{ user.email|default:"—" }}
-      </p>
-
-      <p class="card-text">
-        <strong>Data rejestracji:</strong>
-        {{ user.date_joined|date:"d.m.Y H:i" }}
-      </p>
+    <div class="card w-100">
+        <div class="card-body">
+            <h5 class="card-title">Dane konta:</h5>
+            <p class="card-text">
+                <strong>Nazwa użytkownika:</strong> {{ user.username }}
+            </p>
+            <p class="card-text">
+                <strong>E-mail:</strong> {{ user.email|default:"-" }}
+            </p>
+            <p class="card-text">
+                <strong>Data rejestracji:</strong>
+                {{ user.date_joined|date:"d.m.Y H:i" }}
+            </p>
+        </div>
     </div>
-  </div>
 
-  <div class="mt-4">
-    <a href="{% url 'password_change' %}" class="btn btn-outline-primary me-2">
-      Zmień hasło
-    </a>
+    <hr>
 
-    <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
-      Wyloguj
-    </a>
-  </div>
+    <h4 class="mt-4">Twoje wypożyczone książki</h4>
+    {% if loans %}
+        <ul class="list-group mb-3">
+        {% for loan in loans %}
+            <li class="list-group-item">
+                <strong>{{ loan.book.title }}</strong> &mdash;
+                Wypożyczona: {{ loan.borrowed_at|date:"d.m.Y" }}<br>
+                Termin zwrotu: <strong>{{ loan.return_at|date:"d.m.Y" }}</strong>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nie masz aktualnie żadnych wypożyczonych książek.</p>
+    {% endif %}
 
+    <div class="mt-4">
+        <a href="{% url 'password_change' %}" class="btn btn-outline-primary me-2">
+            Zmień hasło
+        </a>
+        <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
+            Wyloguj
+        </a>
+    </div>
 </div>
 {% endblock %}

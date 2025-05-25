@@ -3,3 +3,5 @@ psycopg[binary]
 dj-database-url
 pytest
 pytest-django
+psycopg2-binary
+gunicorn

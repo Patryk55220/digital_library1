@@ -1,0 +1,17 @@
+<h2>Twoje wypożyczenia</h2>
+<table>
+  <tr>
+    <th>Książka</th>
+    <th>Data wypożyczenia</th>
+    <th>Termin zwrotu</th>
+  </tr>
+  {% for loan in loans %}
+  <tr>
+    <td>{{ loan.book.title }}</td>
+    <td>{{ loan.borrowed_at }}</td>
+    <td>{{ loan.due_date }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="3">Brak wypożyczeń.</td></tr>
+  {% endfor %}
+</table>
