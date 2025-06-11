@@ -1,0 +1,50 @@
+#  Digital Library
+
+Aplikacja do zarządzania biblioteką (Django + PostgreSQL + Docker).
+
+---
+
+## Wymagania
+
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- (Opcjonalnie) Git
+
+---
+
+##  Szybki start
+
+1. **Sklonuj repozytorium**
+
+   ```bash
+   git clone <tutaj_wstaw_link_do_repozytorium>
+   cd digital_library
+
+Domyślny plik .env jest już gotowy do uruchomienia lokalnie.
+
+Zbuduj i uruchom kontenery
+
+docker compose up --build
+Aplikacja będzie dostępna pod adresem: http://localhost:8000
+
+Stwórz użytkownika administracyjnego
+W nowym terminalu wpisz:
+
+docker compose exec web python manage.py createsuperuser
+I podążaj za instrukcją w konsoli.
+
+Panel administracyjny
+
+Dostęp: http://localhost:8000/admin/
+
+ Podstawowe komendy
+Uruchamianie testów:
+
+docker compose exec web python manage.py test
+Tworzenie migracji:
+
+docker compose exec web python manage.py makemigrations
+docker compose exec web python manage.py migrate
+Kolekcjonowanie plików statycznych:
+
+docker compose exec web python manage.py collectstatic
